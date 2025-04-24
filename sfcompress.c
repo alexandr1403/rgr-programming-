@@ -189,10 +189,22 @@ SYMBCODE **symb_init(LIST *list)
     return a;
 }
 
+SYMBCODE **symb_onesymbol_init(char ch)
+{
+    SYMBCODE **a = (SYMBCODE **)malloc(sizeof(SYMBCODE *));
+
+    a[0] = (SYMBCODE *)malloc(sizeof(SYMBCODE));
+    a[0]->symb = ch;
+    a[0]->len = 1;
+    a[0]->bin_str = (char *)malloc(sizeof(char) * 64);
+    a[0]->bin_str[0] = '0';
+    a[0]->bin_str[1] = '\0';
+    return a;
+}
+
 /*Копирующий конструктор для  SYMBCODE*/
 void copy_symb(size_t n_symb, SYMBCODE **a, SYMBCODE **b)
 {
-    // SYMBCODE **b = def_symb_construct(n_symb);
     for (int i = 0; i < n_symb; i++)
     {
         strncpy(b[i]->bin_str, a[i]->bin_str, a[i]->len);
@@ -538,7 +550,7 @@ void demo_encoding(const char *file_in, const char *file_out)
     LIST *ver = probability(LEN, string);
     BubbleSort(ver);
 
-    SYMBCODE **symbs = symb_init(ver);
+    SYMBCODE **symbs = (ver->count == 1) ? (symb_onesymbol_init(string[0])) : (symb_init(ver)); // когда в строке все символы одинаковые, задаём каждому стандартное значение кода "0"
     codes_create(symbs, ver, 0, partition(ver), ver->count);
     for (int j = 0; j < ver->count; j++)
         printf("symb: %c\tlen: %d\tcode: %s\n", symbs[j]->symb, symbs[j]->len, symbs[j]->bin_str);

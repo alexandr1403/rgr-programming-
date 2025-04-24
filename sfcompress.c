@@ -326,7 +326,7 @@ uchar *bitmass_create(size_t size, uchar *mass)
 {
     size_t lenth = (size % BYTE == 0) ? (size / BYTE) : ((size / BYTE) + 1);
     uchar *res = (uchar *)calloc(lenth, sizeof(uchar));
-    int offs = BYTE - (size % BYTE); // padding - вычисляется как количество незаполненных битов в крайнем байте
+    int offs = (size % BYTE == 0) ? 0 : (BYTE - (size % BYTE)); // padding - вычисляется как количество незаполненных битов в крайнем байте
     for (int i = lenth - 1, j = size - 1; i >= 0; i--)
     {
         while (offs < 8)
@@ -350,12 +350,16 @@ uchar *bitmass_init(size_t n, char *string, LIST *ver, SYMBCODE **symbs)
     size_t size = size_of_bitmass(n, ver->count, symbs, ver);
     uchar *res = code_mass_create(size, n, str_codes);
     uchar *bitmass = bitmass_create(size, res);
-    // puts("encoding messege:");
-    // for (int i = 0; i < size; i++)
-    // {
-    //     printf("%c", res[i]);
-    // }
-    // printf("\n");
+    // puts("bitmass:");
+    // int h = (size % 8 == 0) ? (size / 8) : (size / 8 + 1);
+    // for (int i = 0; i < h; i++)
+    //     printf("%d\n", bitmass[i]);
+    puts("encoding messege:");
+    for (int i = 0; i < size; i++)
+    {
+        printf("%c", res[i]);
+    }
+    printf("\n");
     destroy_codemass(n, str_codes);
     free(res);
     return bitmass;
@@ -378,7 +382,7 @@ void file_write(const char *filename, size_t n_bitmass, uchar *bitmass, size_t n
     mass_sizes[2] = n_symbs;
     FILE *fp = fopen(filename, "wb");
     fwrite(mass_sizes, sizeof(int), SIZEOFSIZES, fp);
-    fwrite(bitmass, sizeof(char), n_bitmass, fp);
+    fwrite(bitmass, sizeof(uchar), n_bitmass, fp);
     fwrite(offsmass, sizeof(char), n_offs, fp);
     for (int i = 0; i < n_symbs; i++)
     {

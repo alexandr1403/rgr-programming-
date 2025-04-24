@@ -13,7 +13,8 @@ int main(int argc, char const *argv[])
                     demo_decoding(argv[3], "out.txt");
                 exit(EXIT_SUCCESS);
             }
-            exit(EXIT_FAILURE);
+            else
+                exit(EXIT_FAILURE);
         }
         else
         {

@@ -271,18 +271,6 @@ unsigned int *encode_msg(size_t n, char msg[n], size_t symbcode_size, SYMBCODE *
     return res;
 }
 
-// unsigned int summ_codes(size_t n, char **coding)
-// {
-//     unsigned int summ = 0;
-//     for (int i = n - 1, pow = 1; i >= 0; i--)
-//     {
-//         for (int j = strlen(coding[i]) - 1; j >= 0; j--, pow *= 2)
-//             summ += (coding[i][j] - '0') * pow;
-//         // printf("pow: %d\n", pow);
-//     }
-//     return summ;
-// }
-
 char **encoding_first(size_t n, char msg[n], size_t symbcode_size, SYMBCODE **a)
 {
     char **res = (char **)malloc(sizeof(char *) * n);
@@ -454,7 +442,6 @@ COMPLEX *read_from_binfile(const char *filename)
         fread(&(symbs[i]->len), sizeof(int), 1, fp);
         fread(symbs[i]->bin_str, sizeof(char), symbs[i]->len, fp);
     }
-    printf("%c\n", symbs[25]->bin_str[0]);
 
     fclose(fp);
     COMPLEX *res = complex_construct(mass_sizes);
@@ -502,7 +489,6 @@ char search_symb(size_t n_symb, SYMBCODE **symb, char *key)
 {
     for (int i = 0; i < n_symb; i++)
     {
-        printf("bin: %s\nkey: %s\n", symb[i]->bin_str, key);
         if (strcmp(symb[i]->bin_str, key) == 0)
             return symb[i]->symb;
     }

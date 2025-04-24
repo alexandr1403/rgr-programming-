@@ -39,12 +39,6 @@ typedef struct complex
     SYMBCODE **symbs;
 } COMPLEX;
 
-typedef union sfcompress
-{
-    char x;
-    int y;
-} CHARINT;
-
 typedef unsigned char uchar;
 
 /*Прототипы функций*/

@@ -75,7 +75,7 @@ COMPLEX *read_from_binfile(const char *filename);
 void file_save(const char *filename, char *decode);
 char *file_read(const char *filename);
 char search_symb(size_t n_symb, SYMBCODE **symb, char *key);
-char *decode_msg(size_t n_offs, char *offsmass, size_t n_symb, SYMBCODE **symb, size_t n_bit, uchar *bitmass);
+char *decode_msg(COMPLEX *c);
 void demo_encoding(const char *file_in, const char *file_out);
 void demo_decoding(const char *file_in, const char *file_out);
 void demo(const char *flag, const char *file_in, const char *file_out);

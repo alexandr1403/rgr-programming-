@@ -495,16 +495,18 @@ char search_symb(size_t n_symb, SYMBCODE **symb, char *key)
     return 0;
 }
 
-char *decode_msg(size_t n_offs, char *offsmass, size_t n_symb, SYMBCODE **symb, size_t n_bit, uchar *bitmass)
+char *decode_msg(COMPLEX *complex)
 {
+    size_t n_symb = complex->mass_sizes[2];
+    size_t n_offs = complex->mass_sizes[1];
     char **mass_codes = (char **)malloc(n_offs * sizeof(char *));
     char *res = (char *)calloc((n_offs + 1), sizeof(char));
     for (int offs = BYTE - 1, i = 0, count = 0, j = 0; i < n_offs; i++)
     {
-        mass_codes[i] = (char *)malloc(sizeof(char) * (offsmass[i] + 1));
-        for (; j < offsmass[i]; j++)
+        mass_codes[i] = (char *)malloc(sizeof(char) * (complex->offsmass[i] + 1));
+        for (; j < complex->offsmass[i]; j++)
         {
-            mass_codes[i][j] = ((bitmass[count] >> offs) & ONEBITMASK) + '0';
+            mass_codes[i][j] = ((complex->bitmass[count] >> offs) & ONEBITMASK) + '0';
             offs--;
             if (offs < 0)
             {
@@ -517,7 +519,7 @@ char *decode_msg(size_t n_offs, char *offsmass, size_t n_symb, SYMBCODE **symb, 
 
         j = 0;
 
-        res[i] = search_symb(n_symb, symb, mass_codes[i]);
+        res[i] = search_symb(n_symb, complex->symbs, mass_codes[i]);
     }
     res[n_offs] = '\0';
 
@@ -529,7 +531,7 @@ char *decode_msg(size_t n_offs, char *offsmass, size_t n_symb, SYMBCODE **symb, 
 void demo_encoding(const char *file_in, const char *file_out)
 {
     char *string = file_read(file_in);
-    LIST *ver = probability(strlen(string), string);
+    LIST *ver = probability(LEN, string);
     BubbleSort(ver);
 
     SYMBCODE **symbs = symb_init(ver);
@@ -537,14 +539,14 @@ void demo_encoding(const char *file_in, const char *file_out)
     for (int j = 0; j < ver->count; j++)
         printf("symb: %c\tlen: %d\tcode: %s\n", symbs[j]->symb, symbs[j]->len, symbs[j]->bin_str);
 
-    char **str_codes = encoding_first(strlen(string), string, ver->count, symbs);
-    size_t size = size_of_bitmass(strlen(string), ver->count, symbs, ver);
+    char **str_codes = encoding_first(LEN, string, ver->count, symbs);
+    size_t size = size_of_bitmass(LEN, ver->count, symbs, ver);
 
-    uchar *bitmass = bitmass_init(strlen(string), string, ver, symbs);
-    char *offsmass = offsmass_create(strlen(string), str_codes);
+    uchar *bitmass = bitmass_init(LEN, string, ver, symbs);
+    char *offsmass = offsmass_create(LEN, str_codes);
 
     size_t n_bitmass = (size % BYTE == 0) ? (size / BYTE) : ((size / BYTE) + 1);
-    file_write(file_out, n_bitmass, bitmass, strlen(string), offsmass, ver->count, symbs);
+    file_write(file_out, n_bitmass, bitmass, LEN, offsmass, ver->count, symbs);
 
     destroy_codemass(LEN, str_codes);
     free(string);
@@ -559,7 +561,7 @@ void demo_decoding(const char *file_in, const char *file_out)
 {
     COMPLEX *complex = read_from_binfile(file_in);
 
-    char *decode = decode_msg(complex->mass_sizes[1], complex->offsmass, complex->mass_sizes[2], complex->symbs, complex->mass_sizes[0], complex->bitmass);
+    char *decode = decode_msg(complex);
     printf("decoding messege:\n%s\n", decode);
 
     file_save(file_out, decode);

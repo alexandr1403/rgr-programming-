@@ -3,9 +3,10 @@
 void control_of_memory(int n_args, void *ptr, ...)
 {
     va_list ap;
+    void *p;
     va_start(ap, ptr);
-    for (int i = 0; i <= n_args; i++)
-        if (ptr == NULL)
+    for (int i = 2; i <= n_args; i++) // i = 2, потому что va_start уже сместил указатель с первого аргумента
+        if (((p = va_arg(ap, void *)) == NULL) || ptr == NULL)
         {
             puts("Ошибка выделения памяти.");
             exit(EXIT_FAILURE);
@@ -701,11 +702,7 @@ char *decode_msg(COMPLEX *complex)
     size_t n_offs = complex->mass_sizes[1];
     char **mass_codes = (char **)malloc(n_offs * sizeof(char *));
     char *res = (char *)calloc((n_offs + 1), sizeof(char));
-    // if ((res == NULL) || (mass_codes == NULL))
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
+    // char *res = NULL;
     control_of_memory(2, res, mass_codes);
     for (int offs = BYTE - 1, i = 0, count = 0, j = 0; i < n_offs; i++)
     {

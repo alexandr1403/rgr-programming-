@@ -9,6 +9,7 @@ void control_of_memory(int n_args, void *ptr, ...)
         if (((p = va_arg(ap, void *)) == NULL) || ptr == NULL)
         {
             puts("Ошибка выделения памяти.");
+            va_end(ap);
             exit(EXIT_FAILURE);
         }
     va_end(ap);
@@ -48,11 +49,6 @@ LIST *probability(size_t n, char mass[n])
     int *counts = (int *)calloc(max + 1, sizeof(int));
     double *ver = (double *)calloc(max + 1, sizeof(double));
     char *symbols = (char *)malloc(sizeof(char) * (max + 1));
-    // if ((counts == NULL) || (ver == NULL) || (symbols == NULL))
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(3, counts, ver, symbols);
     int count = 0;
 
@@ -71,31 +67,18 @@ LIST *probability(size_t n, char mass[n])
     }
     // printf("max:%c\nmin:%c\n", max, min);
     PROB **probabs = (PROB **)malloc(sizeof(PROB *) * count);
-    // if ((probabs == NULL))
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, probabs);
+
     for (int i = 0; i < count; i++)
     {
         probabs[i] = (PROB *)malloc(sizeof(PROB));
-        // if (probabs[i] == NULL)
-        // {
-        //     puts("Ошибка выделения памяти.");
-        //     exit(EXIT_FAILURE);
-        // }
         control_of_memory(1, probabs[i]);
         probabs[i]->ch = symbols[i];
         probabs[i]->ver = ver[(int)symbols[i]];
     }
     LIST *prob_list = (LIST *)malloc(sizeof(LIST));
-    // if (prob_list == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, prob_list);
+
     prob_list->count = count;
     prob_list->list = probabs;
     free(counts);
@@ -165,12 +148,8 @@ double abs_d(double a)
 int partition(LIST *probs)
 {
     double *res = (double *)calloc((probs->count + 1), sizeof(double));
-    // if (res == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, res);
+
     double left = 0.0;
     double right = summ(probs);
     res[0] = right - left;
@@ -188,28 +167,15 @@ int partition(LIST *probs)
 LIST *def_list_construct(size_t n)
 {
     LIST *list = (LIST *)malloc(sizeof(LIST));
-    // if (list == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, list);
+
     list->count = n;
     list->list = (PROB **)malloc(sizeof(PROB *) * n);
-    // if (list->list == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, list->list);
+
     for (int i = 0; i < n; i++)
     {
         list->list[i] = (PROB *)malloc(sizeof(PROB));
-        // if (list->list[i] == NULL)
-        // {
-        //     puts("Ошибка выделения памяти.");
-        //     exit(EXIT_FAILURE);
-        // }
         control_of_memory(1, list->list[i]);
     }
     return list;
@@ -227,21 +193,11 @@ void list_free(LIST *a)
 SYMBCODE **def_symb_construct(size_t n)
 {
     SYMBCODE **a = (SYMBCODE **)malloc(sizeof(SYMBCODE *) * n);
-    // if (a == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, a);
 
     for (int i = 0; i < n; i++)
     {
         a[i] = (SYMBCODE *)malloc(sizeof(SYMBCODE));
-        // if (a[i] == NULL)
-        // {
-        //     puts("Ошибка выделения памяти.");
-        //     exit(EXIT_FAILURE);
-        // }
         control_of_memory(1, a[i]);
         a[i]->bin_str = (char *)calloc(64, sizeof(char)); // 64 переделать
         control_of_memory(1, a[i]->bin_str);
@@ -266,29 +222,15 @@ void symb_free(size_t n, SYMBCODE **a)
 SYMBCODE **symb_init(LIST *list)
 {
     SYMBCODE **a = (SYMBCODE **)malloc(sizeof(SYMBCODE *) * list->count);
-    // if (a == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, a);
+
     for (int i = 0; i < list->count; i++)
     {
         a[i] = (SYMBCODE *)malloc(sizeof(SYMBCODE));
-        // if (a[i] == NULL)
-        // {
-        //     puts("Ошибка выделения памяти.");
-        //     exit(EXIT_FAILURE);
-        // }
         control_of_memory(1, a[i]);
         a[i]->symb = list->list[i]->ch;
         a[i]->len = 0;
         a[i]->bin_str = (char *)malloc(sizeof(char) * 64);
-        // if (a[i]->bin_str == NULL)
-        // {
-        //     puts("Ошибка выделения памяти.");
-        //     exit(EXIT_FAILURE);
-        // }
         control_of_memory(1, a[i]->bin_str);
     }
     return a;
@@ -297,29 +239,16 @@ SYMBCODE **symb_init(LIST *list)
 SYMBCODE **symb_onesymbol_init(char ch)
 {
     SYMBCODE **a = (SYMBCODE **)malloc(sizeof(SYMBCODE *));
-    // if (a == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, a);
 
     a[0] = (SYMBCODE *)malloc(sizeof(SYMBCODE));
-    // if (a[0] == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, a[0]);
+
     a[0]->symb = ch;
     a[0]->len = 1;
     a[0]->bin_str = (char *)malloc(sizeof(char) * 64);
-    // if (a[0]->bin_str == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, a[0]->bin_str);
+
     a[0]->bin_str[0] = '0';
     a[0]->bin_str[1] = '\0';
     return a;
@@ -396,22 +325,13 @@ char *lookup(size_t n, SYMBCODE **a, char ch)
 char **encode_msg(size_t n, char msg[n], size_t symbcode_size, SYMBCODE **a)
 {
     char **res = (char **)malloc(sizeof(char *) * n);
-    // if (res == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, res);
+
     for (int i = 0; i < n; i++)
     {
         char *str = lookup(symbcode_size, a, msg[i]);
         size_t len = strlen(str);
         res[i] = (char *)malloc(sizeof(char) * len);
-        // if (res[i] == NULL)
-        // {
-        //     puts("Ошибка выделения памяти.");
-        //     exit(EXIT_FAILURE);
-        // }
         control_of_memory(1, res[i]);
         strcpy(res[i], str);
     }
@@ -443,11 +363,6 @@ size_t size_of_bitmass(size_t len_str, size_t n, SYMBCODE **a, LIST *ver)
 uchar *code_mass_create(size_t size, size_t n_code, char **mass)
 {
     uchar *res = (uchar *)calloc(size, sizeof(uchar));
-    // if (res == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, res);
     int count = size - 1;
 
@@ -466,11 +381,6 @@ uchar *bitmass_create(size_t size, uchar *mass)
 {
     size_t lenth = (size % BYTE == 0) ? (size / BYTE) : ((size / BYTE) + 1);
     uchar *res = (uchar *)calloc(lenth, sizeof(uchar));
-    // if (res == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, res);
     int offs = (size % BYTE == 0) ? 0 : (BYTE - (size % BYTE)); // padding - вычисляется как количество незаполненных битов в крайнем байте
     for (int i = lenth - 1, j = size - 1; i >= 0; i--)
@@ -521,12 +431,8 @@ char *offsmass_create(size_t n, char **mass) // полученный здесь 
 void file_write(const char *filename, size_t n_bitmass, uchar *bitmass, size_t n_offs, char *offsmass, size_t n_symbs, SYMBCODE **symbs)
 {
     int *mass_sizes = (int *)calloc(SIZEOFSIZES, sizeof(int));
-    // if (mass_sizes == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, mass_sizes);
+
     mass_sizes[0] = n_bitmass;
     mass_sizes[1] = n_offs;
     mass_sizes[2] = n_symbs;
@@ -552,21 +458,11 @@ void file_write(const char *filename, size_t n_bitmass, uchar *bitmass, size_t n
 COMPLEX *complex_construct(int *mass_sizes)
 {
     COMPLEX *res = (COMPLEX *)malloc(sizeof(COMPLEX));
-    // if (res == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, res);
 
     res->mass_sizes = (int *)calloc(SIZEOFSIZES, sizeof(int));
     res->bitmass = (uchar *)calloc(*mass_sizes, sizeof(uchar));
     res->offsmass = (char *)calloc(*(mass_sizes + 1), sizeof(char));
-    // if ((res->mass_sizes == NULL) || (res->bitmass == NULL) || (res->offsmass == NULL))
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(3, res->mass_sizes, res->bitmass, res->offsmass);
     res->symbs = def_symb_construct(*(mass_sizes + 2));
     return res;
@@ -600,11 +496,6 @@ COMPLEX *read_from_binfile(const char *filename)
 
     uchar *bitmass = (uchar *)calloc(mass_sizes[0], sizeof(uchar));
     char *mass_offs = (char *)calloc(mass_sizes[1], sizeof(char));
-    // if ((bitmass == NULL) || (mass_offs == NULL))
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(2, bitmass, mass_offs);
     SYMBCODE **symbs = def_symb_construct(mass_sizes[2]);
 
@@ -660,12 +551,8 @@ void file_save(const char *filename, char *decode)
 char *file_read(const char *filename)
 {
     char *res = (char *)malloc(sizeof(char) * MAXSTRSIZE); // переиграть максимальный размер на очень большой
-    // if (res == NULL)
-    // {
-    //     puts("Ошибка выделения памяти.");
-    //     exit(EXIT_FAILURE);
-    // }
     control_of_memory(1, res);
+
     char ch;
     FILE *fp = fopen(filename, "r");
     control_of_open(fp);
@@ -707,12 +594,8 @@ char *decode_msg(COMPLEX *complex)
     for (int offs = BYTE - 1, i = 0, count = 0, j = 0; i < n_offs; i++)
     {
         mass_codes[i] = (char *)malloc(sizeof(char) * (complex->offsmass[i] + 1));
-        // if (mass_codes[i] == NULL)
-        // {
-        //     puts("Ошибка выделения памяти.");
-        //     exit(EXIT_FAILURE);
-        // }
         control_of_memory(1, mass_codes[i]);
+
         for (; j < complex->offsmass[i]; j++)
         {
             mass_codes[i][j] = ((complex->bitmass[count] >> offs) & ONEBITMASK) + '0';

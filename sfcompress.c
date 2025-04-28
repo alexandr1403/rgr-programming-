@@ -1,8 +1,31 @@
 #include "sfcompress.h"
 
+void control_of_memory(int n_args, void *ptr, ...)
+{
+    va_list ap;
+    va_start(ap, ptr);
+    for (int i = 0; i <= n_args; i++)
+        if (ptr == NULL)
+        {
+            puts("Ошибка выделения памяти.");
+            exit(EXIT_FAILURE);
+        }
+    va_end(ap);
+}
+
+void control_of_open(FILE *fp)
+{
+    if (fp == NULL)
+    {
+        puts("Ошибка открытия файла.");
+        exit(EXIT_FAILURE);
+    }
+}
+
 int *getmaxmin(size_t n, char mass[n])
 {
     int *maxmin = (int *)calloc(2, sizeof(int));
+    control_of_memory(1, maxmin);
     int max = mass[0], min = max;
     for (int i = 1; i < n; i++)
     {
@@ -24,6 +47,12 @@ LIST *probability(size_t n, char mass[n])
     int *counts = (int *)calloc(max + 1, sizeof(int));
     double *ver = (double *)calloc(max + 1, sizeof(double));
     char *symbols = (char *)malloc(sizeof(char) * (max + 1));
+    // if ((counts == NULL) || (ver == NULL) || (symbols == NULL))
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(3, counts, ver, symbols);
     int count = 0;
 
     for (int i = 0; i < n; i++)
@@ -41,13 +70,31 @@ LIST *probability(size_t n, char mass[n])
     }
     // printf("max:%c\nmin:%c\n", max, min);
     PROB **probabs = (PROB **)malloc(sizeof(PROB *) * count);
+    // if ((probabs == NULL))
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, probabs);
     for (int i = 0; i < count; i++)
     {
         probabs[i] = (PROB *)malloc(sizeof(PROB));
+        // if (probabs[i] == NULL)
+        // {
+        //     puts("Ошибка выделения памяти.");
+        //     exit(EXIT_FAILURE);
+        // }
+        control_of_memory(1, probabs[i]);
         probabs[i]->ch = symbols[i];
         probabs[i]->ver = ver[(int)symbols[i]];
     }
     LIST *prob_list = (LIST *)malloc(sizeof(LIST));
+    // if (prob_list == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, prob_list);
     prob_list->count = count;
     prob_list->list = probabs;
     free(counts);
@@ -117,6 +164,12 @@ double abs_d(double a)
 int partition(LIST *probs)
 {
     double *res = (double *)calloc((probs->count + 1), sizeof(double));
+    // if (res == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, res);
     double left = 0.0;
     double right = summ(probs);
     res[0] = right - left;
@@ -134,10 +187,30 @@ int partition(LIST *probs)
 LIST *def_list_construct(size_t n)
 {
     LIST *list = (LIST *)malloc(sizeof(LIST));
+    // if (list == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, list);
     list->count = n;
     list->list = (PROB **)malloc(sizeof(PROB *) * n);
+    // if (list->list == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, list->list);
     for (int i = 0; i < n; i++)
+    {
         list->list[i] = (PROB *)malloc(sizeof(PROB));
+        // if (list->list[i] == NULL)
+        // {
+        //     puts("Ошибка выделения памяти.");
+        //     exit(EXIT_FAILURE);
+        // }
+        control_of_memory(1, list->list[i]);
+    }
     return list;
 }
 
@@ -153,11 +226,24 @@ void list_free(LIST *a)
 SYMBCODE **def_symb_construct(size_t n)
 {
     SYMBCODE **a = (SYMBCODE **)malloc(sizeof(SYMBCODE *) * n);
+    // if (a == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, a);
 
     for (int i = 0; i < n; i++)
     {
         a[i] = (SYMBCODE *)malloc(sizeof(SYMBCODE));
+        // if (a[i] == NULL)
+        // {
+        //     puts("Ошибка выделения памяти.");
+        //     exit(EXIT_FAILURE);
+        // }
+        control_of_memory(1, a[i]);
         a[i]->bin_str = (char *)calloc(64, sizeof(char)); // 64 переделать
+        control_of_memory(1, a[i]->bin_str);
         a[i]->symb = 0;
         a[i]->len = 0;
     }
@@ -179,12 +265,30 @@ void symb_free(size_t n, SYMBCODE **a)
 SYMBCODE **symb_init(LIST *list)
 {
     SYMBCODE **a = (SYMBCODE **)malloc(sizeof(SYMBCODE *) * list->count);
+    // if (a == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, a);
     for (int i = 0; i < list->count; i++)
     {
         a[i] = (SYMBCODE *)malloc(sizeof(SYMBCODE));
+        // if (a[i] == NULL)
+        // {
+        //     puts("Ошибка выделения памяти.");
+        //     exit(EXIT_FAILURE);
+        // }
+        control_of_memory(1, a[i]);
         a[i]->symb = list->list[i]->ch;
         a[i]->len = 0;
         a[i]->bin_str = (char *)malloc(sizeof(char) * 64);
+        // if (a[i]->bin_str == NULL)
+        // {
+        //     puts("Ошибка выделения памяти.");
+        //     exit(EXIT_FAILURE);
+        // }
+        control_of_memory(1, a[i]->bin_str);
     }
     return a;
 }
@@ -192,11 +296,29 @@ SYMBCODE **symb_init(LIST *list)
 SYMBCODE **symb_onesymbol_init(char ch)
 {
     SYMBCODE **a = (SYMBCODE **)malloc(sizeof(SYMBCODE *));
+    // if (a == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, a);
 
     a[0] = (SYMBCODE *)malloc(sizeof(SYMBCODE));
+    // if (a[0] == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, a[0]);
     a[0]->symb = ch;
     a[0]->len = 1;
     a[0]->bin_str = (char *)malloc(sizeof(char) * 64);
+    // if (a[0]->bin_str == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, a[0]->bin_str);
     a[0]->bin_str[0] = '0';
     a[0]->bin_str[1] = '\0';
     return a;
@@ -262,35 +384,34 @@ char *lookup(size_t n, SYMBCODE **a, char ch)
     return NULL;
 }
 
-int binstr_to_int(size_t len, char binstr[len], int pow)
-{
-    int res = 0;
-    for (int i = len - 1, p = pow; i >= 0; i--, p *= 2)
-        res += (binstr[i] - '0') * p;
-    return res;
-}
+// int binstr_to_int(size_t len, char binstr[len], int pow)
+// {
+//     int res = 0;
+//     for (int i = len - 1, p = pow; i >= 0; i--, p *= 2)
+//         res += (binstr[i] - '0') * p;
+//     return res;
+// }
 
-unsigned int *encode_msg(size_t n, char msg[n], size_t symbcode_size, SYMBCODE **a)
-{
-    unsigned int *res = (unsigned int *)malloc(sizeof(int) * n);
-    for (int i = 0; i < n; i++)
-    {
-        char *str = lookup(symbcode_size, a, msg[i]);
-        size_t len = strlen(str);
-        res[i] = binstr_to_int(len, str, 1);
-    }
-
-    return res;
-}
-
-char **encoding_first(size_t n, char msg[n], size_t symbcode_size, SYMBCODE **a)
+char **encode_msg(size_t n, char msg[n], size_t symbcode_size, SYMBCODE **a)
 {
     char **res = (char **)malloc(sizeof(char *) * n);
+    // if (res == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, res);
     for (int i = 0; i < n; i++)
     {
         char *str = lookup(symbcode_size, a, msg[i]);
         size_t len = strlen(str);
         res[i] = (char *)malloc(sizeof(char) * len);
+        // if (res[i] == NULL)
+        // {
+        //     puts("Ошибка выделения памяти.");
+        //     exit(EXIT_FAILURE);
+        // }
+        control_of_memory(1, res[i]);
         strcpy(res[i], str);
     }
 
@@ -321,6 +442,12 @@ size_t size_of_bitmass(size_t len_str, size_t n, SYMBCODE **a, LIST *ver)
 uchar *code_mass_create(size_t size, size_t n_code, char **mass)
 {
     uchar *res = (uchar *)calloc(size, sizeof(uchar));
+    // if (res == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, res);
     int count = size - 1;
 
     for (int i = n_code - 1; i >= 0; i--)
@@ -338,15 +465,18 @@ uchar *bitmass_create(size_t size, uchar *mass)
 {
     size_t lenth = (size % BYTE == 0) ? (size / BYTE) : ((size / BYTE) + 1);
     uchar *res = (uchar *)calloc(lenth, sizeof(uchar));
+    // if (res == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, res);
     int offs = (size % BYTE == 0) ? 0 : (BYTE - (size % BYTE)); // padding - вычисляется как количество незаполненных битов в крайнем байте
     for (int i = lenth - 1, j = size - 1; i >= 0; i--)
     {
         while (offs < 8)
         {
-            if (mass[j] == '1')
-                res[i] |= (0x1 << offs);
-            else if (mass[j] == '0')
-                res[i] |= (0x0 << offs);
+            res[i] |= ((mass[j] - '0') & ONEBITMASK) << offs;
             offs++;
             j--;
         }
@@ -358,7 +488,7 @@ uchar *bitmass_create(size_t size, uchar *mass)
 
 uchar *bitmass_init(size_t n, char *string, LIST *ver, SYMBCODE **symbs)
 {
-    char **str_codes = encoding_first(n, string, ver->count, symbs);
+    char **str_codes = encode_msg(n, string, ver->count, symbs);
     size_t size = size_of_bitmass(n, ver->count, symbs, ver);
     uchar *res = code_mass_create(size, n, str_codes);
     uchar *bitmass = bitmass_create(size, res);
@@ -380,6 +510,7 @@ uchar *bitmass_init(size_t n, char *string, LIST *ver, SYMBCODE **symbs)
 char *offsmass_create(size_t n, char **mass) // полученный здесь массив сохраняем в бинарный файл и используем в качестве массива последовательности смещений смещений для раскодирования
 {
     char *res = (char *)calloc(n, sizeof(char));
+    control_of_memory(1, res);
     for (int i = 0; i < n; i++)
         res[i] = strlen(mass[i]);
     return res;
@@ -389,10 +520,17 @@ char *offsmass_create(size_t n, char **mass) // полученный здесь 
 void file_write(const char *filename, size_t n_bitmass, uchar *bitmass, size_t n_offs, char *offsmass, size_t n_symbs, SYMBCODE **symbs)
 {
     int *mass_sizes = (int *)calloc(SIZEOFSIZES, sizeof(int));
+    // if (mass_sizes == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, mass_sizes);
     mass_sizes[0] = n_bitmass;
     mass_sizes[1] = n_offs;
     mass_sizes[2] = n_symbs;
     FILE *fp = fopen(filename, "wb");
+    control_of_open(fp);
     fwrite(mass_sizes, sizeof(int), SIZEOFSIZES, fp);
     fwrite(bitmass, sizeof(uchar), n_bitmass, fp);
     fwrite(offsmass, sizeof(char), n_offs, fp);
@@ -403,15 +541,32 @@ void file_write(const char *filename, size_t n_bitmass, uchar *bitmass, size_t n
         fwrite(symbs[i]->bin_str, sizeof(char), symbs[i]->len, fp);
     }
     free(mass_sizes);
-    fclose(fp);
+    if (fclose(fp) == EOF)
+    {
+        puts("Ошибка закрытия файла.");
+        exit(EXIT_FAILURE);
+    }
 }
 
 COMPLEX *complex_construct(int *mass_sizes)
 {
     COMPLEX *res = (COMPLEX *)malloc(sizeof(COMPLEX));
+    // if (res == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, res);
+
     res->mass_sizes = (int *)calloc(SIZEOFSIZES, sizeof(int));
     res->bitmass = (uchar *)calloc(*mass_sizes, sizeof(uchar));
     res->offsmass = (char *)calloc(*(mass_sizes + 1), sizeof(char));
+    // if ((res->mass_sizes == NULL) || (res->bitmass == NULL) || (res->offsmass == NULL))
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(3, res->mass_sizes, res->bitmass, res->offsmass);
     res->symbs = def_symb_construct(*(mass_sizes + 2));
     return res;
 }
@@ -430,7 +585,9 @@ void complex_free(COMPLEX *a)
 COMPLEX *read_from_binfile(const char *filename)
 {
     FILE *fp = fopen(filename, "rb");
+    control_of_open(fp);
     int *mass_sizes = (int *)calloc(SIZEOFSIZES, sizeof(int));
+    control_of_memory(1, mass_sizes);
 
     fpos_t fpos;
     for (int i = 0; i < SIZEOFSIZES; i++)
@@ -442,6 +599,12 @@ COMPLEX *read_from_binfile(const char *filename)
 
     uchar *bitmass = (uchar *)calloc(mass_sizes[0], sizeof(uchar));
     char *mass_offs = (char *)calloc(mass_sizes[1], sizeof(char));
+    // if ((bitmass == NULL) || (mass_offs == NULL))
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(2, bitmass, mass_offs);
     SYMBCODE **symbs = def_symb_construct(mass_sizes[2]);
 
     fgetpos(fp, &fpos);
@@ -459,7 +622,11 @@ COMPLEX *read_from_binfile(const char *filename)
         fread(symbs[i]->bin_str, sizeof(char), symbs[i]->len, fp);
     }
 
-    fclose(fp);
+    if (fclose(fp) == EOF)
+    {
+        puts("Ошибка закрытия файла.");
+        exit(EXIT_FAILURE);
+    }
     COMPLEX *res = complex_construct(mass_sizes);
 
     memmove(res->mass_sizes, mass_sizes, sizeof(int) * SIZEOFSIZES);
@@ -479,16 +646,28 @@ COMPLEX *read_from_binfile(const char *filename)
 void file_save(const char *filename, char *decode)
 {
     FILE *fp = fopen(filename, "w");
+    control_of_open(fp);
     fprintf(fp, "%s", decode);
-    fclose(fp);
+    if (fclose(fp) == EOF)
+    {
+        puts("Ошибка закрытия файла.");
+        exit(EXIT_FAILURE);
+    }
 }
 
 /*Чтение из текстового файла в строку*/
 char *file_read(const char *filename)
 {
     char *res = (char *)malloc(sizeof(char) * MAXSTRSIZE); // переиграть максимальный размер на очень большой
+    // if (res == NULL)
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(1, res);
     char ch;
     FILE *fp = fopen(filename, "r");
+    control_of_open(fp);
     int count = 0;
     while ((ch = getc(fp)) != EOF)
     {
@@ -496,7 +675,12 @@ char *file_read(const char *filename)
         count++;
     }
     res[count] = '\0';
-    fclose(fp);
+
+    if (fclose(fp) == EOF)
+    {
+        puts("Ошибка закрытия файла.");
+        exit(EXIT_FAILURE);
+    }
     return res;
 }
 
@@ -517,9 +701,21 @@ char *decode_msg(COMPLEX *complex)
     size_t n_offs = complex->mass_sizes[1];
     char **mass_codes = (char **)malloc(n_offs * sizeof(char *));
     char *res = (char *)calloc((n_offs + 1), sizeof(char));
+    // if ((res == NULL) || (mass_codes == NULL))
+    // {
+    //     puts("Ошибка выделения памяти.");
+    //     exit(EXIT_FAILURE);
+    // }
+    control_of_memory(2, res, mass_codes);
     for (int offs = BYTE - 1, i = 0, count = 0, j = 0; i < n_offs; i++)
     {
         mass_codes[i] = (char *)malloc(sizeof(char) * (complex->offsmass[i] + 1));
+        // if (mass_codes[i] == NULL)
+        // {
+        //     puts("Ошибка выделения памяти.");
+        //     exit(EXIT_FAILURE);
+        // }
+        control_of_memory(1, mass_codes[i]);
         for (; j < complex->offsmass[i]; j++)
         {
             mass_codes[i][j] = ((complex->bitmass[count] >> offs) & ONEBITMASK) + '0';
@@ -532,9 +728,7 @@ char *decode_msg(COMPLEX *complex)
         }
 
         mass_codes[i][j] = '\0';
-
         j = 0;
-
         res[i] = search_symb(n_symb, complex->symbs, mass_codes[i]);
     }
     res[n_offs] = '\0';
@@ -543,33 +737,43 @@ char *decode_msg(COMPLEX *complex)
     return res;
 }
 
+/*Вычисление коэффициента сжатия*/
+double compression_rate(size_t n_begin, size_t n_res)
+{
+    return ((double)n_begin * BYTE) / (double)n_res;
+}
+
 /*Демонстрация кодирования текста (флаг "-с")*/
 void demo_encoding(const char *file_in, const char *file_out)
 {
     char *string = file_read(file_in);
-    LIST *ver = probability(LEN, string);
+    LIST *ver = probability(LEN(string), string);
     BubbleSort(ver);
 
     SYMBCODE **symbs = (ver->count == 1) ? (symb_onesymbol_init(string[0])) : (symb_init(ver)); // когда в строке все символы одинаковые, задаём каждому стандартное значение кода "0"
     codes_create(symbs, ver, 0, partition(ver), ver->count);
     for (int j = 0; j < ver->count; j++)
-        printf("symb: %c\tlen: %d\tcode: %s\n", symbs[j]->symb, symbs[j]->len, symbs[j]->bin_str);
+        printf("symb: %c\tlen code: %d\tcode: %s\n", symbs[j]->symb, symbs[j]->len, symbs[j]->bin_str);
 
-    char **str_codes = encoding_first(LEN, string, ver->count, symbs);
-    size_t size = size_of_bitmass(LEN, ver->count, symbs, ver);
+    char **str_codes = encode_msg(LEN(string), string, ver->count, symbs);
+    size_t size = size_of_bitmass(LEN(string), ver->count, symbs, ver);
 
-    uchar *bitmass = bitmass_init(LEN, string, ver, symbs);
-    char *offsmass = offsmass_create(LEN, str_codes);
+    printf("Коэффициент сжатия текста: %.2lf\n", compression_rate(LEN(string), size));
+
+    uchar *bitmass = bitmass_init(LEN(string), string, ver, symbs);
+    char *offsmass = offsmass_create(LEN(string), str_codes);
+    control_of_memory(2, bitmass, offsmass);
 
     size_t n_bitmass = (size % BYTE == 0) ? (size / BYTE) : ((size / BYTE) + 1);
-    file_write(file_out, n_bitmass, bitmass, LEN, offsmass, ver->count, symbs);
+    file_write(file_out, n_bitmass, bitmass, LEN(string), offsmass, ver->count, symbs);
 
-    destroy_codemass(LEN, str_codes);
+    destroy_codemass(LEN(string), str_codes);
     free(string);
     symb_free(ver->count, symbs);
     list_free(ver);
     free(bitmass);
     free(offsmass);
+    // printf("apostrof size: %zd bytes\n", sizeof("’") / sizeof(char));
 }
 
 /*Демонстрация раскодирования текста (флаг "-d")*/
@@ -578,9 +782,11 @@ void demo_decoding(const char *file_in, const char *file_out)
     COMPLEX *complex = read_from_binfile(file_in);
 
     char *decode = decode_msg(complex);
+    control_of_memory(1, decode);
     printf("decoding messege:\n%s\n", decode);
 
     file_save(file_out, decode);
     free(decode);
     complex_free(complex);
+    printf("apostrof size: %zd bytes\n", sizeof("’") / sizeof(char));
 }

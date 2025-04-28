@@ -18,7 +18,7 @@ int main(int argc, char const *argv[])
         }
         else
         {
-            puts("Ээ давай нормально да!");
+            puts("Неверный запуск программы.");
             exit(EXIT_FAILURE);
         }
     }

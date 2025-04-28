@@ -6,11 +6,12 @@
 #include <stdbool.h>
 #include <string.h>
 #include <limits.h>
+#include <stdarg.h>
 #define BYTE 8
-#define MAXSTRSIZE 500
+#define MAXSTRSIZE 1000000
 #define ONEBITMASK 0x1
 #define SIZEOFSIZES 3
-#define LEN strlen(string)
+#define LEN(x) strlen(x)
 
 typedef struct prob
 {
@@ -58,10 +59,8 @@ SYMBCODE **symb_init(LIST *list);
 void copy_symb(size_t n_symb, SYMBCODE **a, SYMBCODE **b);
 void codes_create(SYMBCODE **symbs, LIST *list, int low, int mid, int high);
 char *lookup(size_t n, SYMBCODE **a, char ch);
-int binstr_to_int(size_t len, char binstr[len], int pow);
-unsigned int *encode_msg(size_t n, char msg[n], size_t symbcode_size, SYMBCODE **a);
 unsigned int summ_codes(size_t n, char **coding);
-char **encoding_first(size_t n, char msg[n], size_t symbcode_size, SYMBCODE **a);
+char **encode_msg(size_t n, char msg[n], size_t symbcode_size, SYMBCODE **a);
 void destroy_codemass(size_t n, char **mass);
 size_t size_of_bitmass(size_t len_str, size_t n, SYMBCODE **a, LIST *ver);
 uchar *code_mass_create(size_t size, size_t n_code, char **mass);
@@ -79,5 +78,7 @@ char *decode_msg(COMPLEX *c);
 void demo_encoding(const char *file_in, const char *file_out);
 void demo_decoding(const char *file_in, const char *file_out);
 void demo(const char *flag, const char *file_in, const char *file_out);
+void control_of_memory(int n, void *ptr, ...);
+double compression_rate(size_t n_start, size_t n_end);
 
 #endif

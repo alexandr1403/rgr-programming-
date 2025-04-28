@@ -496,7 +496,7 @@ uchar *bitmass_init(size_t n, char *string, LIST *ver, SYMBCODE **symbs)
     // int h = (size % 8 == 0) ? (size / 8) : (size / 8 + 1);
     // for (int i = 0; i < h; i++)
     //     printf("%d\n", bitmass[i]);
-    puts("encoding messege:");
+    puts("Закодированное сообщение:");
     for (int i = 0; i < size; i++)
     {
         printf("%c", res[i]);
@@ -752,8 +752,9 @@ void demo_encoding(const char *file_in, const char *file_out)
 
     SYMBCODE **symbs = (ver->count == 1) ? (symb_onesymbol_init(string[0])) : (symb_init(ver)); // когда в строке все символы одинаковые, задаём каждому стандартное значение кода "0"
     codes_create(symbs, ver, 0, partition(ver), ver->count);
+    puts("Таблица символ - код:");
     for (int j = 0; j < ver->count; j++)
-        printf("symb: %c\tlen code: %d\tcode: %s\n", symbs[j]->symb, symbs[j]->len, symbs[j]->bin_str);
+        printf("символ: %c\tдлина кода: %d\tкод: %s\n", symbs[j]->symb, symbs[j]->len, symbs[j]->bin_str);
 
     char **str_codes = encode_msg(LEN(string), string, ver->count, symbs);
     size_t size = size_of_bitmass(LEN(string), ver->count, symbs, ver);
@@ -783,10 +784,10 @@ void demo_decoding(const char *file_in, const char *file_out)
 
     char *decode = decode_msg(complex);
     control_of_memory(1, decode);
-    printf("decoding messege:\n%s\n", decode);
+    printf("Распакованное сообщение:\n%s\n", decode);
 
     file_save(file_out, decode);
     free(decode);
     complex_free(complex);
-    printf("apostrof size: %zd bytes\n", sizeof("’") / sizeof(char));
+    // printf("apostrof size: %zd bytes\n", sizeof("’") / sizeof(char));
 }

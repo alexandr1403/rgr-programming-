@@ -1,5 +1,5 @@
-#ifndef SFANO_H_
-#define SFANO_H_
+#ifndef SFC_H_
+#define SFC_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -79,6 +79,7 @@ void demo_encoding(const char *file_in, const char *file_out);
 void demo_decoding(const char *file_in, const char *file_out);
 void demo(const char *flag, const char *file_in, const char *file_out);
 void control_of_memory(int n, void *ptr, ...);
+void control_of_open(FILE *fp);
 double compression_rate(size_t n_start, size_t n_end);
 
 #endif

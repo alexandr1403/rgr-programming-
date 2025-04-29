@@ -1,12 +1,12 @@
 #include "sfcompress.h"
 
-void control_of_memory(int n_args, void *ptr, ...)
+void control_of_memory(int n_args, ...)
 {
     va_list ap;
-    void *p;
-    va_start(ap, ptr);
-    for (int i = 2; i <= n_args; i++) // i = 2, потому что va_start уже сместил указатель с первого аргумента
-        if (((p = va_arg(ap, void *)) == NULL) || ptr == NULL)
+    void *ptr;
+    va_start(ap, n_args);
+    for (int i = 0; i < n_args; i++)
+        if (((ptr = va_arg(ap, void *)) == NULL))
         {
             puts("Ошибка выделения памяти.");
             va_end(ap);
@@ -589,7 +589,7 @@ char *decode_msg(COMPLEX *complex)
     size_t n_offs = complex->mass_sizes[1];
     char **mass_codes = (char **)malloc(n_offs * sizeof(char *));
     char *res = (char *)calloc((n_offs + 1), sizeof(char));
-    // char *res = NULL;
+    // char **mass_codes = NULL;
     control_of_memory(2, res, mass_codes);
     for (int offs = BYTE - 1, i = 0, count = 0, j = 0; i < n_offs; i++)
     {

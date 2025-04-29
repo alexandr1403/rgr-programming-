@@ -8,7 +8,7 @@
 #include <limits.h>
 #include <stdarg.h>
 #define BYTE 8
-#define MAXSTRSIZE 1000000
+#define MAXSTRSIZE 10000000
 #define ONEBITMASK 0x1
 #define SIZEOFSIZES 3
 #define LEN(x) strlen(x)
@@ -78,7 +78,7 @@ char *decode_msg(COMPLEX *c);
 void demo_encoding(const char *file_in, const char *file_out);
 void demo_decoding(const char *file_in, const char *file_out);
 void demo(const char *flag, const char *file_in, const char *file_out);
-void control_of_memory(int n, void *ptr, ...);
+void control_of_memory(int n, ...);
 void control_of_open(FILE *fp);
 double compression_rate(size_t n_start, size_t n_end);
 
